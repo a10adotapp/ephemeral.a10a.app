@@ -1,13 +1,19 @@
 import { NewButton } from "@/components/new-button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { authOptions } from "@/lib/auth/auth-options";
+import { getServerSession } from "next-auth";
+import Link from "next/link";
 import { NoteList } from "./_components/note-list";
 
 export default async function Page() {
+  const session = await getServerSession(authOptions);
+
   return (
     <div className="flex flex-col gap-4">
       <Card>
@@ -32,9 +38,20 @@ export default async function Page() {
         </CardHeader>
       </Card>
 
-      <NewButton href="/notes/new">新しくメモを作成する</NewButton>
+      {session ? (
+        <div className="flex flex-col gap-4">
+          <NewButton href="/notes/new">新しくメモを作成する</NewButton>
 
-      <NoteList />
+          <NoteList />
+        </div>
+      ) : (
+        <Button
+          asChild
+          variant="default"
+          size="sm">
+          <Link href="/sign-in">サインイン</Link>
+        </Button>
+      )}
     </div>
   );
 }

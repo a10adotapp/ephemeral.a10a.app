@@ -17,6 +17,7 @@ export async function listNote(): Promise<Note[] | null> {
     const notes = await prisma.note.findMany({
       where: {
         deletedAt: null,
+        userId: session.user.id,
       },
       orderBy: {
         createdAt: "desc",

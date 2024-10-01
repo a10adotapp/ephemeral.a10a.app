@@ -15,6 +15,7 @@ import Markdown from "react-markdown";
 import { z } from "zod";
 import { getNoteByUuid } from "./_actions/get-note-by-uuid";
 import { Menu } from "./_components/menu";
+import { UrlCopyButton } from "./_components/url-copy-button";
 
 const paramsSchema = z.object({
   uuid: z.string().uuid(),
@@ -37,8 +38,6 @@ export async function generateMetadata({
     ...searchParams,
   });
 
-  const session = await getServerSession(authOptions);
-
   const note = await getNoteByUuid(parsedParams.uuid);
 
   if (!note) {
@@ -46,6 +45,7 @@ export async function generateMetadata({
   }
 
   return {
+    metadataBase: new URL(await getAppUrl()),
     title: "Ephemeral - メモ作成サービス -",
     description: (note.summary || note.body || "").split("\n").at(0),
     openGraph: {
@@ -103,8 +103,10 @@ export default async function Page({
   return (
     <div className="flex flex-col gap-4">
       {session?.user.id === note.userId ? (
-        <div className="flex justify-end">
+        <div className="flex flex-col items-end gap-2">
           <Menu note={note} />
+
+          <UrlCopyButton note={note} />
         </div>
       ) : null}
 

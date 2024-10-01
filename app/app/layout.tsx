@@ -1,10 +1,8 @@
-import { format } from "node:url";
 import { authOptions } from "@/lib/auth/auth-options";
-import { getServerPathname } from "@/lib/server-pathname/get-server-pathname";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { M_PLUS_1_Code } from "next/font/google";
-import { RedirectType, redirect } from "next/navigation";
+import {} from "next/navigation";
 import type { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import { MainHeader } from "./_components/main-header";
@@ -27,21 +25,6 @@ export default async function Layout({
   children: ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  const pathname = await getServerPathname();
-
-  if (pathname !== "/sign-in") {
-    if (!session || !session.user.id) {
-      return redirect(
-        format({
-          pathname: "/sign-in",
-          query: {
-            redirect: pathname,
-          },
-        }),
-        RedirectType.push,
-      );
-    }
-  }
 
   return (
     <html lang="ja">

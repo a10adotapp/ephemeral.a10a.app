@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -7,12 +9,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Navigation } from "./_components/navigation";
 import { SignOutButton } from "./_components/sign-out-button";
 import { Title } from "./_components/title";
 
 export function Aside() {
+  const { data: session } = useSession();
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const openChange = useCallback((isOpen: boolean) => {
@@ -50,7 +56,16 @@ export function Aside() {
           </div>
 
           <div className="flex flex-col py-4">
-            <SignOutButton />
+            {session ? (
+              <SignOutButton />
+            ) : (
+              <Button
+                asChild
+                variant="default"
+                size="sm">
+                <Link href="/sign-in">サインイン</Link>
+              </Button>
+            )}
           </div>
         </div>
       </SheetContent>

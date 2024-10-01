@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type ReactNode, useMemo } from "react";
@@ -17,17 +16,11 @@ export function LinkItem({
 }) {
   const pathname = usePathname();
 
-  const { data: session } = useSession();
-
   const isActive = useMemo(() => {
     const activePattern = new RegExp(`^(?:${href}|${href}/.*)$`);
 
     return activePattern.test(pathname);
   }, [href, pathname]);
-
-  if (!session) {
-    return null;
-  }
 
   return (
     <Button

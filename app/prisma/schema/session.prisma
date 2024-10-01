@@ -1,0 +1,25 @@
+/// セッション
+///
+/// @namespace 認証
+model Session {
+  id Int @id @default(autoincrement()) @map("id")
+
+  userId Int @map("user_id")
+
+  /// 表示用識別子
+  uuid String @map("uuid")
+
+  /// IPアドレス
+  ipAddress String @map("ip_address")
+
+  /// ユーザーエージェント
+  userAgent String @map("user_agent")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sessions")
+}

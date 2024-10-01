@@ -1,0 +1,31 @@
+/// ノート
+///
+/// @namespace ノート
+model Note {
+  id Int @id @default(autoincrement()) @map("id")
+
+  userId Int @map("user_id")
+
+  /// 表示用識別子
+  uuid String @map("uuid")
+
+  /// 本文
+  body String @map("body") @db.Text
+
+  /// 要約
+  summary String? @map("summary") @db.Text
+
+  /// 画像ファイル
+  imageFilename String? @map("image_filename")
+
+  /// 有効期限
+  expiredAt DateTime? @map("expired_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notes")
+}

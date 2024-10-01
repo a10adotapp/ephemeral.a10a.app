@@ -1,0 +1,17 @@
+{
+  "name": "ephemeral-a10a-app",
+  "dockerComposeFile": "compose.yaml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "postStartCommand": "npm install -g npm",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome",
+        "chakrounanas.turbo-console-log",
+        "Prisma.prisma",
+        "yoavbls.pretty-ts-errors"
+      ]
+    }
+  }
+}

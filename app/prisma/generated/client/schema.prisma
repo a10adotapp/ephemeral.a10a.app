@@ -1,0 +1,108 @@
+/// ノート
+///
+/// @namespace ノート
+model Note {
+  id Int @id @default(autoincrement()) @map("id")
+
+  userId Int @map("user_id")
+
+  /// 表示用識別子
+  uuid String @map("uuid")
+
+  /// 本文
+  body String @map("body") @db.Text
+
+  /// 要約
+  summary String? @map("summary") @db.Text
+
+  /// 画像ファイル
+  imageFilename String? @map("image_filename")
+
+  /// 有効期限
+  expiredAt DateTime? @map("expired_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notes")
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+  previewFeatures = ["prismaSchemaFolder"]
+  output          = "../generated/client"
+}
+
+// https://github.com/samchon/prisma-markdown
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "../../../doc/SCHEMA.md"
+  title    = "Schema"
+}
+
+/// セッション
+///
+/// @namespace 認証
+model Session {
+  id Int @id @default(autoincrement()) @map("id")
+
+  userId Int @map("user_id")
+
+  /// 表示用識別子
+  uuid String @map("uuid")
+
+  /// IPアドレス
+  ipAddress String @map("ip_address")
+
+  /// ユーザーエージェント
+  userAgent String @map("user_agent")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sessions")
+}
+
+/// ユーザー
+///
+/// @namespace 認証
+/// @namespace ノート
+model User {
+  id Int @id @default(autoincrement()) @map("id")
+
+  /// 表示用識別子
+  uuid String @map("uuid")
+
+  /// メールアドレス
+  email String? @map("email")
+
+  /// パスワード
+  password String? @map("password")
+
+  /// 名前
+  name String? @map("name")
+
+  /// 名前（読み）
+  phoneticName String? @map("phonetic_name")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  notes    Note[]
+  sessions Session[]
+
+  @@map("users")
+}

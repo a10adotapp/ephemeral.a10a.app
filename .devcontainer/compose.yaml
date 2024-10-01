@@ -1,0 +1,30 @@
+services:
+  app:
+    image: localhost/ephemeral-a10a-app:dev
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+    container_name: ephemeral-a10a-app-app
+    env_file:
+      - .env
+    environment:
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_URL_INTERNAL: "http://localhost:3000"
+      NEXTAUTH_SECRET: "OVkcrLril30FZ6goC+AgOYUltt++X9bBicekFJyfDM8="
+      DATABASE_URL: "mysql://root:root@db:3306/ephemeral_a10a_app_dev"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+    command: sleep infinity
+    volumes:
+      - ..:/workspace
+    ports:
+      - 3000:3000
+
+  db:
+    image: mysql:8.0.28
+    container_name: ephemeral-a10a-app-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_TCP_PORT: 3306
+      MYSQL_DATABASE: "ephemeral_a10a_app_dev"
+    ports:
+      - 3306:3306

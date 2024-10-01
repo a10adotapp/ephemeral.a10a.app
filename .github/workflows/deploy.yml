@@ -24,11 +24,11 @@ jobs:
       - name: docker build
         run: |
           docker build \
-              --tag ${{ secrets.DOCKER_REGISTRY_HOST }}/changokushi.a10a.app:latest \
+              --tag ${{ secrets.DOCKER_REGISTRY_HOST }}/ephemeral.a10a.app:latest \
               .
 
       - name: docker push
-        run: docker push ${{ secrets.DOCKER_REGISTRY_HOST }}/changokushi.a10a.app:latest
+        run: docker push ${{ secrets.DOCKER_REGISTRY_HOST }}/ephemeral.a10a.app:latest
 
       - name: setup ssh
         run: |
@@ -40,7 +40,7 @@ jobs:
       - name: ssh deploy
         run: |
           ssh ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST }} ' \
-              cd ~/changokushi.a10a.app \
+              cd ~/ephemeral.a10a.app \
                && docker compose pull \
                && docker compose build \
                && docker compose up -d \

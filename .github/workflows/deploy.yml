@@ -25,7 +25,7 @@ jobs:
         run: |
           docker build \
               --tag ${{ secrets.DOCKER_REGISTRY_HOST }}/ephemeral.a10a.app:latest \
-              .
+              app
 
       - name: docker push
         run: docker push ${{ secrets.DOCKER_REGISTRY_HOST }}/ephemeral.a10a.app:latest

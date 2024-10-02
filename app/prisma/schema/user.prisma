@@ -8,10 +8,10 @@ model User {
   /// 表示用識別子
   uuid String @map("uuid")
 
-  /// メールアドレス
-  email String? @map("email")
+  /// 認証用ユーザー名
+  username String? @map("username")
 
-  /// パスワード
+  /// 認証用パスワード
   password String? @map("password")
 
   /// 名前

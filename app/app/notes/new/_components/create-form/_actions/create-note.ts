@@ -34,7 +34,10 @@ export async function createNote(data: {
 
         imageFilename = `${createHash("md5").update(imageBuffer).digest("hex")}.jpg`;
 
-        const dirName = join(await getUploadFileDirname(), "notes");
+        const dirName = join(
+          await getUploadFileDirname(),
+          "assets/upload/notes",
+        );
 
         mkdirSync(dirName, { recursive: true });
 

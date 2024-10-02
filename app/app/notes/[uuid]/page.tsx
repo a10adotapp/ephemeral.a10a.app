@@ -124,7 +124,7 @@ export default async function Page({
               <Image
                 width={1200}
                 height={630}
-                src={`/notes/${note.imageFilename}`}
+                src={`/assets/upload/notes/${note.imageFilename}`}
                 alt="share"
                 priority={true}
               />

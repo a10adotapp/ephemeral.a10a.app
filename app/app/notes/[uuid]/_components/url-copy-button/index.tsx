@@ -20,6 +20,8 @@ export function UrlCopyButton({
       toast.success("URLをコピーしました");
     } catch (err) {
       toast.error("URLをコピーできませんでした");
+
+      alert(JSON.stringify(err));
     }
   }, [note.uuid]);
 

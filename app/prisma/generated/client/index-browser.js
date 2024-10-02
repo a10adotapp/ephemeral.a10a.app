@@ -146,7 +146,7 @@ exports.Prisma.SessionScalarFieldEnum = {
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   uuid: 'uuid',
-  email: 'email',
+  username: 'username',
   password: 'password',
   name: 'name',
   phoneticName: 'phoneticName',

@@ -22,7 +22,7 @@ erDiagram
 "users" {
   Int id PK
   String uuid
-  String email "nullable"
+  String username "nullable"
   String password "nullable"
   String name "nullable"
   String phonetic_name "nullable"
@@ -54,8 +54,8 @@ erDiagram
 **Properties**
   - `id`: 
   - `uuid`: 表示用識別子
-  - `email`: メールアドレス
-  - `password`: パスワード
+  - `username`: 認証用ユーザー名
+  - `password`: 認証用パスワード
   - `name`: 名前
   - `phonetic_name`: 名前（読み）
   - `created_at`: 
@@ -79,7 +79,7 @@ erDiagram
 "users" {
   Int id PK
   String uuid
-  String email "nullable"
+  String username "nullable"
   String password "nullable"
   String name "nullable"
   String phonetic_name "nullable"
@@ -109,8 +109,8 @@ erDiagram
 **Properties**
   - `id`: 
   - `uuid`: 表示用識別子
-  - `email`: メールアドレス
-  - `password`: パスワード
+  - `username`: 認証用ユーザー名
+  - `password`: 認証用パスワード
   - `name`: 名前
   - `phonetic_name`: 名前（読み）
   - `created_at`: 

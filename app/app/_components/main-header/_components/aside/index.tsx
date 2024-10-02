@@ -13,8 +13,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Navigation } from "./_components/navigation";
-import { SignOutButton } from "./_components/sign-out-button";
 import { Title } from "./_components/title";
+import { UserDisplay } from "./_components/user-display";
 
 export function Aside() {
   const { data: session } = useSession();
@@ -57,7 +57,7 @@ export function Aside() {
 
           <div className="flex flex-col py-4">
             {session ? (
-              <SignOutButton />
+              <UserDisplay />
             ) : (
               <Button
                 asChild

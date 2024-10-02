@@ -4,7 +4,7 @@ import type { Provider } from "next-auth/providers/index";
 import { z } from "zod";
 import { checkPassword } from "../password/check-password";
 import { createUser } from "./actions/create-user";
-import { getUserByEmail } from "./actions/get-user-by-email";
+import { getUserByUsername } from "./actions/get-user-by-username";
 
 const credentialsSchema = z.union([
   z.object({
@@ -12,7 +12,7 @@ const credentialsSchema = z.union([
   }),
   z.object({
     asGuest: z.coerce.boolean().pipe(z.literal(false)).optional(),
-    email: z.string().email(),
+    username: z.string().min(1),
     password: z.string().min(1),
   }),
 ]);
@@ -20,7 +20,7 @@ const credentialsSchema = z.union([
 export function CredentialsProvider(): Provider {
   return Credentials({
     credentials: {
-      email: {},
+      username: {},
       password: {},
       asGuest: {
         type: "boolean",
@@ -39,7 +39,7 @@ export function CredentialsProvider(): Provider {
         }
 
         if (!parsedCredentials.asGuest) {
-          const user = await getUserByEmail(parsedCredentials.email);
+          const user = await getUserByUsername(parsedCredentials.username);
 
           if (!user) {
             throw new Error("user not found");

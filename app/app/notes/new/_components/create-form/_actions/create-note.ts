@@ -1,15 +1,17 @@
 "use server";
-
-import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import {} from "node:fs";
 import { authOptions } from "@/lib/auth/auth-options";
-import { getUploadFileDirname } from "@/lib/env/get-upload-file-dirname";
+import { getAppUrlInternal } from "@/lib/env/get-app-url-internal";
 import logger from "@/lib/logger";
 import { generateUuidForNote } from "@/lib/uuid/generate-uuid-for-note";
 import prisma from "@/prisma";
 import type { Note } from "@/prisma/generated/client";
 import { getServerSession } from "next-auth";
+import { z } from "zod";
+
+const postImageResponseSchema = z.object({
+  imageFilename: z.string().min(1),
+});
 
 export async function createNote(data: {
   body: string;
@@ -24,38 +26,51 @@ export async function createNote(data: {
       throw new Error("unauthorized");
     }
 
-    let imageFilename: string | null = null;
-
-    if (data.image) {
-      const imageBufferStr = data.image.split(",").at(1);
-
-      if (imageBufferStr) {
-        const imageBuffer = Buffer.from(imageBufferStr, "base64");
-
-        imageFilename = `${createHash("md5").update(imageBuffer).digest("hex")}.jpg`;
-
-        const dirName = join(
-          await getUploadFileDirname(),
-          "assets/upload/notes",
-        );
-
-        mkdirSync(dirName, { recursive: true });
-
-        writeFileSync(join(dirName, imageFilename), imageBuffer);
-      }
-    }
-
-    const note = await prisma.note.create({
+    let note = await prisma.note.create({
       data: {
         userId: session.user.id,
         uuid: await generateUuidForNote(),
-        imageFilename,
         ...{
           ...data,
           image: undefined,
         },
       },
     });
+
+    if (data.image) {
+      const imageBufferStr = data.image.split(",").at(1);
+
+      if (imageBufferStr) {
+        const response = await fetch(
+          `${await getAppUrlInternal()}/api/notes/${note.uuid}/image`,
+          {
+            method: "POST",
+            headers: {
+              "x-user-uuid": session.user.uuid,
+            },
+            body: JSON.stringify({
+              data: imageBufferStr,
+            }),
+          },
+        );
+
+        if (response.ok) {
+          const parsedResponseData = postImageResponseSchema.parse(
+            await response.json(),
+          );
+
+          note = await prisma.note.update({
+            where: {
+              deletedAt: null,
+              id: note.id,
+            },
+            data: {
+              imageFilename: parsedResponseData.imageFilename,
+            },
+          });
+        }
+      }
+    }
 
     return note;
   } catch (err) {

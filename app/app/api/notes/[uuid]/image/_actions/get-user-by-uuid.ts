@@ -2,21 +2,22 @@
 
 import logger from "@/lib/logger";
 import prisma from "@/prisma";
-import type { Note } from "@/prisma/generated/client";
+import type { User } from "@/prisma/generated/client";
 
-export async function getNoteByUuid(uuid: string): Promise<Note | null> {
+export async function getUserByUuid(uuid: string): Promise<User | null> {
   try {
-    const note = await prisma.note.findFirstOrThrow({
+    const user = await prisma.user.findFirstOrThrow({
       where: {
         deletedAt: null,
         uuid,
       },
     });
 
-    return note;
+    return user;
   } catch (err) {
     logger.error({
       error: err,
+      uuid,
     });
   }
 

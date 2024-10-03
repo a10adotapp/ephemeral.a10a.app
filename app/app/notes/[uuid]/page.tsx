@@ -53,7 +53,7 @@ export async function generateMetadata({
         ...(note.imageFilename
           ? [
               {
-                url: join(await getAppUrl(), "notes", note.imageFilename),
+                url: join(await getAppUrl(), "api/notes/", note.uuid, "image"),
                 width: 1200,
                 height: 630,
               },

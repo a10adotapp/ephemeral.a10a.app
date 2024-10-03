@@ -14,16 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import invert from "invert-color";
 import {} from "next-auth/react";
 import { useRouter } from "next/navigation";
-import {
-  type ChangeEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ChangeEvent, useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -86,7 +79,6 @@ export function CreateForm() {
 
         router.refresh();
       } catch (err) {
-        console.log({ err });
         toast.error("メモの保存に失敗しました");
       } finally {
         setIsBusy(false);
@@ -95,93 +87,90 @@ export function CreateForm() {
     [router],
   );
 
-  useEffect(() => {
-    const updateCanvas = async (value?: {
-      body?: string;
-      summary?: string;
-    }) => {
-      const ctx = canvasRef.current?.getContext("2d") || null;
+  const updateCanvas = useCallback(async () => {
+    const { body, summary } = form.getValues();
 
-      if (ctx) {
-        ctx.reset();
-        ctx.clearRect(0, 0, 1200, 630);
+    const ctx = canvasRef.current?.getContext("2d") || null;
 
-        const text = value?.summary || value?.body || "";
+    if (ctx) {
+      ctx.reset();
+      ctx.clearRect(0, 0, 1200, 630);
 
-        ctx.beginPath();
-        ctx.fillStyle = "#ffffff";
-        ctx.rect(0, 0, 1200, 630);
-        ctx.fill();
+      const text = summary || body || "";
 
-        if (image) {
-          await new Promise<void>((resolve) => {
-            const img = new Image();
+      ctx.beginPath();
+      ctx.fillStyle = "#ffffff";
+      ctx.rect(0, 0, 1200, 630);
+      ctx.fill();
 
-            img.onload = () => {
-              let sx = 0;
-              let sy = 0;
-              let sw = img.width;
-              let sh = img.height;
+      if (image) {
+        await new Promise<void>((resolve) => {
+          const img = new Image();
 
-              if (img.width / img.height > 1200 / 630) {
-                sw = (img.height * 1200) / 630;
-                sx = img.width / 2 - sw / 2;
-              } else {
-                sh = (img.width * 630) / 1200;
-                sy = img.height / 2 - sh / 2;
-              }
+          img.onload = () => {
+            let sx = 0;
+            let sy = 0;
+            let sw = img.width;
+            let sh = img.height;
 
-              ctx.beginPath();
-              ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 1200, 630);
+            if (img.width / img.height > 1200 / 630) {
+              sw = (img.height * 1200) / 630;
+              sx = img.width / 2 - sw / 2;
+            } else {
+              sh = (img.width * 630) / 1200;
+              sy = img.height / 2 - sh / 2;
+            }
 
-              resolve();
-            };
+            ctx.beginPath();
+            ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 1200, 630);
 
-            img.src = image;
-          });
-        }
+            resolve();
+          };
 
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 20;
-        ctx.rect(10, 10, 1180, 610);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 20;
-        ctx.roundRect(10, 10, 1180, 610, 20);
-        ctx.stroke();
-
-        const rows = text.split("\n");
-
-        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-          const row = rows[rowIndex];
-          const y = 315 - (80 * rows.length) / 2 + 60 + 80 * rowIndex;
-
-          ctx.beginPath();
-          ctx.fillStyle = color;
-          ctx.textAlign = "center";
-          ctx.font = `bold 80px ${font?.style.fontFamily}`;
-          ctx.shadowColor = invert(color);
-          ctx.shadowBlur = 20;
-          ctx.fillText(row, 600, y, 1160);
-        }
+          img.src = image;
+        });
       }
-    };
 
-    const subscription = form.watch((value, { name, type }) => {
-      if (type === "change") {
-        updateCanvas(value);
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 20;
+      ctx.rect(10, 10, 1180, 610);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 20;
+      ctx.roundRect(10, 10, 1180, 610, 20);
+      ctx.stroke();
+
+      const rows = text.split("\n");
+
+      for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        const row = rows[rowIndex];
+        const y = 315 - (80 * rows.length) / 2 + 60 + 80 * rowIndex;
+
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.textAlign = "center";
+        ctx.font = `bold 80px ${font?.style.fontFamily}`;
+        ctx.fillText(row, 600, y, 1160);
       }
-    });
+    }
+  }, [font?.style.fontFamily, form.getValues, color, image]);
 
-    updateCanvas();
+  const bodyFieldChange = useCallback(
+    (event: ChangeEvent<HTMLTextAreaElement>) => {
+      updateCanvas();
+    },
+    [updateCanvas],
+  );
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [font?.style.fontFamily, color, image, form.watch]);
+  const summaryFieldChange = useCallback(
+    (event: ChangeEvent<HTMLTextAreaElement>) => {
+      updateCanvas();
+    },
+    [updateCanvas],
+  );
 
   const colorFieldChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -244,7 +233,14 @@ export function CreateForm() {
               <FormControl>
                 <Textarea
                   className="h-[25vh]"
-                  {...field}
+                  {...{
+                    ...field,
+                    onChange: undefined,
+                  }}
+                  onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                    field.onChange(event);
+                    bodyFieldChange(event);
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -261,7 +257,14 @@ export function CreateForm() {
               <FormControl>
                 <Textarea
                   rows={6}
-                  {...field}
+                  {...{
+                    ...field,
+                    onChange: undefined,
+                  }}
+                  onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                    field.onChange(event);
+                    summaryFieldChange(event);
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -274,7 +277,11 @@ export function CreateForm() {
 
           <Card>
             <canvas
-              ref={canvasRef}
+              ref={(ref: HTMLCanvasElement) => {
+                canvasRef.current = ref;
+
+                updateCanvas();
+              }}
               width={1200}
               height={630}
               className="w-full aspect-[1200/630] mt-2"

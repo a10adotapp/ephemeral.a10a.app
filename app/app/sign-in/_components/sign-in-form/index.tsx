@@ -19,7 +19,7 @@ import { z } from "zod";
 import { SignInAsGuestButton } from "./_components/sign-in-as-guest-button";
 
 const schema = z.object({
-  email: z.string().min(1),
+  username: z.string().min(1),
   password: z.string().min(1),
 });
 
@@ -36,7 +36,7 @@ export function SignInForm({
   const form = useForm<FieldInputs, unknown, FieldOutputs>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -83,7 +83,7 @@ export function SignInForm({
         className="flex flex-col gap-4">
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>ユーザー名</FormLabel>

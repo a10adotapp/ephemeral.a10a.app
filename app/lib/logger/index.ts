@@ -63,8 +63,6 @@ function formatError(err: Error): Record<string, unknown> {
 }
 
 function formatZodError(err: ZodError): Record<string, unknown> {
-  console.log("formatZodError", { stack: err.stack, issues: err.issues });
-
   return {
     message: "invalid values",
     invalid_values: err.issues.map((issue) => {

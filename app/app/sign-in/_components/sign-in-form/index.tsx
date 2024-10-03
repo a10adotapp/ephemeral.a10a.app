@@ -19,7 +19,7 @@ import { z } from "zod";
 import { SignInAsGuestButton } from "./_components/sign-in-as-guest-button";
 
 const schema = z.object({
-  email: z.string().email(),
+  email: z.string().min(1),
   password: z.string().min(1),
 });
 
@@ -86,10 +86,9 @@ export function SignInForm({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>メールアドレス</FormLabel>
+              <FormLabel>ユーザー名</FormLabel>
               <FormControl>
                 <Input
-                  type="email"
                   autoComplete="username"
                   {...field}
                 />
